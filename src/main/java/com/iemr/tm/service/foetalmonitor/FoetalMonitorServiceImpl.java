@@ -278,7 +278,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				// Invoking foetalMonitor API - Sending mother data and test details to
 				// fetosense
 				result = httpUtils.postWithResponseEntity(
-						ConfigProperties.getPropertyByName("foetalMonitor-api-url-ANCTestDetails"), requestObj, header);
+						ConfigProperties.getPropertyByName("fetosense-api-url-ANCTestDetails"), requestObj, header);
 				logger.info("Foetal monitor register mother API response : " + result.toString());
 
 				// check foetalMonitor API response code

@@ -182,6 +182,11 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 		Long timeStamp = System.currentTimeMillis();
 		try {
 			URL url = new URL(filePath);
+			
+			String protocol = url.getProtocol();
+			if(!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
+				throw new IllegalArgumentException("Invalid protocol: " + protocol);
+			}
 			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setDoInput(true);

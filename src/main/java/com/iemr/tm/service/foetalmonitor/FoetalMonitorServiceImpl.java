@@ -176,40 +176,64 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 	}
 
 	// generate report file in file storage
+	
 	private String generatePDF(String filePath) throws IEMRException {
-
+		String filePathLocal = "";
+		Long timeStamp = System.currentTimeMillis();
 		try {
-			URI tempFilePath1 = URI.create(filePath).normalize();
-			String tempFilePath2 = tempFilePath1.toString();
-			String sanitizedPath = Paths.get(UriComponentsBuilder.fromPath(tempFilePath2).build().getPath()).toString();
-
-			URL url = new URL(sanitizedPath);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			URL url = new URL(filePath);
+			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
+			con.setDoInput(true);
+			filePathLocal = foetalMonitorFilePath + "/" + timeStamp.toString() + ".pdf";
+			Path path = Paths.get(filePathLocal);
+			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-			// "Best Practice": Set headers as needed for the specific API
-			/*
-			 * con.addRequestProperty("User-Agent", "Your-User-Agent");
-			 * con.addRequestProperty("Authorization", "Bearer Your-AccessToken");
-			 * con.setDoInput(true);
-			 */
-
-			String fileName = System.currentTimeMillis() + ".pdf";
-			Path filePathLocal = Paths.get(foetalMonitorFilePath, fileName);
-			try (InputStream inputStream = con.getInputStream()) {
-				Files.copy(inputStream, filePathLocal, StandardCopyOption.REPLACE_EXISTING);
-			}
-			return filePathLocal.toString();
+			// base64 = readPDFANDGetBase64(filePathLocal);
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		} finally {
-			if (con != null) {
-				con.disconnect(); // Close the HTTP connection in the finally block
-			}
+			con.disconnect();
 		}
 
+		return filePathLocal;
 	}
+	
+//	private String generatePDF(String filePath) throws IEMRException {
+//
+//		try {
+//			URI tempFilePath1 = URI.create(filePath).normalize();
+//			String tempFilePath2 = tempFilePath1.toString();
+//			String sanitizedPath = Paths.get(UriComponentsBuilder.fromPath(tempFilePath2).build().getPath()).toString();
+//
+//			URL url = new URL(sanitizedPath);
+//			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//			con.setRequestMethod("GET");
+//
+//			// "Best Practice": Set headers as needed for the specific API
+//			/*
+//			 * con.addRequestProperty("User-Agent", "Your-User-Agent");
+//			 * con.addRequestProperty("Authorization", "Bearer Your-AccessToken");
+//			 * con.setDoInput(true);
+//			 */
+//
+//			String fileName = System.currentTimeMillis() + ".pdf";
+//			Path filePathLocal = Paths.get(foetalMonitorFilePath, fileName);
+//			try (InputStream inputStream = con.getInputStream()) {
+//				Files.copy(inputStream, filePathLocal, StandardCopyOption.REPLACE_EXISTING);
+//			}
+//			return filePathLocal.toString();
+//
+//		} catch (IOException e) {
+//			throw new RuntimeException(e.getMessage());
+//		} finally {
+//			if (con != null) {
+//				con.disconnect(); // Close the HTTP connection in the finally block
+//			}
+//		}
+//
+//	}
 
 	// generate report file in file storage
 	@Override

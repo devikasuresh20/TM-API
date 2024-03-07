@@ -245,7 +245,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			if (request != null && request.getFoetalMonitorID() > 0) {
 
 				FoetalMonitorData foetalMonitorTestDetails = new FoetalMonitorData();
-				foetalMonitorTestDetails.setPartnerFoetalMonitorID(request.getFoetalMonitorID());
+				foetalMonitorTestDetails.setPartnerFetosenseID(request.getFoetalMonitorID());
 
 				// send benid in place of benregid to foetalMonitor
 				foetalMonitorTestDetails.setBeneficiaryRegID(benID);

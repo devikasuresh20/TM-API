@@ -78,6 +78,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 
 	private static HttpUtils httpUtils = new HttpUtils();
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
+	private static final String fetosenseURI = "https://asia-south1-amrit-fetosense.cloudfunctions.net/getGraph";
 
 	@Autowired
 	private FoetalMonitorRepo foetalMonitorRepo;
@@ -183,17 +185,15 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 		try {
 			URL url = new URL(filePath);
 			
-			String protocol = url.getProtocol();
-			if(!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
-				throw new IllegalArgumentException("Invalid protocol: " + protocol);
-			}
+
+			if(filePath.contains(fetosenseURI)) {
 			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setDoInput(true);
 			filePathLocal = foetalMonitorFilePath + "/" + timeStamp.toString() + ".pdf";
 			Path path = Paths.get(filePathLocal);
 			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
+			}
 			// base64 = readPDFANDGetBase64(filePathLocal);
 
 		} catch (IOException e) {

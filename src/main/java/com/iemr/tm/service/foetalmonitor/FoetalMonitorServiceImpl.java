@@ -183,10 +183,9 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
 		try {
-			URL url = new URL(filePath);
-			
-
 			if(filePath.contains(fetosenseURI)) {
+				
+			URL url = new URL(filePath);	
 			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setDoInput(true);

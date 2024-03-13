@@ -79,7 +79,6 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 	private static HttpUtils httpUtils = new HttpUtils();
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
-	private static final String fetosenseURI = "asia-south1-amrit-fetosense.cloudfunctions.net";
 
 	@Autowired
 	private FoetalMonitorRepo foetalMonitorRepo;
@@ -186,9 +185,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			
 			
 			URL url = new URL(filePath);	
-			String urlHost= url.getHost();
-			logger.info("Fetosense hostname: " + urlHost);
-			if(urlHost !=null && urlHost.equals(fetosenseURI)) 	{
+			
 			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setDoInput(true);
@@ -196,8 +193,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			Path path = Paths.get(filePathLocal);
 			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 		
-			// base64 = readPDFANDGetBase64(filePathLocal);
-			}
+			
+	
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());

@@ -57,6 +57,7 @@ import com.iemr.tm.data.anc.WrapperComorbidCondDetails;
 import com.iemr.tm.data.anc.WrapperFemaleObstetricHistory;
 import com.iemr.tm.data.anc.WrapperImmunizationHistory;
 import com.iemr.tm.data.anc.WrapperMedicationHistory;
+import com.iemr.tm.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.tm.data.nurse.BenAnthropometryDetail;
 import com.iemr.tm.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.tm.data.nurse.BeneficiaryVisitDetail;
@@ -65,6 +66,7 @@ import com.iemr.tm.data.quickConsultation.BenChiefComplaint;
 import com.iemr.tm.data.quickConsultation.PrescribedDrugDetail;
 import com.iemr.tm.data.quickConsultation.PrescriptionDetail;
 import com.iemr.tm.data.tele_consultation.TeleconsultationRequestOBJ;
+import com.iemr.tm.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.tm.repo.nurse.BenVisitDetailRepo;
 import com.iemr.tm.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.tm.repo.quickConsultation.BenChiefComplaintRepo;
@@ -98,6 +100,8 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	@Autowired
 	private BenAdherenceRepo benAdherenceRepo;
+	@Autowired
+	private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
 
 	
 
@@ -110,12 +114,18 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 		Long saveSuccessFlag = null;
 		Long benVisitCode = null;
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
+		Map<String, Long> visitIdAndCodeMap = null;
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
 
 			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
-			// Call method to save visit details data
-			Map<String, Long> visitIdAndCodeMap = saveBenVisitDetails(requestOBJ.getAsJsonObject("visitDetails"),
+			
+			Short nurseFlag = 9;
+			BeneficiaryFlowStatus data = beneficiaryFlowStatusRepo.checkExistData(nurseUtilityClass.getBenFlowID(), nurseFlag);
+			
+			if(data == null) {
+			visitIdAndCodeMap = saveBenVisitDetails(requestOBJ.getAsJsonObject("visitDetails"),
 					nurseUtilityClass);
+			}
 
 			Long benVisitID = null;
 

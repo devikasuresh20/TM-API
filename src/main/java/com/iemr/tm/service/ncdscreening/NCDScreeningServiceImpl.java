@@ -50,6 +50,7 @@ import com.iemr.tm.data.anc.WrapperComorbidCondDetails;
 import com.iemr.tm.data.anc.WrapperFemaleObstetricHistory;
 import com.iemr.tm.data.anc.WrapperImmunizationHistory;
 import com.iemr.tm.data.anc.WrapperMedicationHistory;
+import com.iemr.tm.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.tm.data.ncdScreening.IDRSData;
 import com.iemr.tm.data.ncdScreening.NCDScreening;
 import com.iemr.tm.data.ncdScreening.PhysicalActivityType;
@@ -147,12 +148,17 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Long saveSuccessFlag = null;
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		Long benVisitCode = null;
+		Map<String, Long> visitIdAndCodeMap = null;
 		// check if visit details data is not null
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
 			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
-			// Call method to save visit details data
-			Map<String, Long> visitIdAndCodeMap = saveBenVisitDetails(requestOBJ.getAsJsonObject("visitDetails"),
+			Short nurseFlag = 9;
+			BeneficiaryFlowStatus data = beneficiaryFlowStatusRepo.checkExistData(nurseUtilityClass.getBenFlowID(), nurseFlag);
+			
+			if(data == null) {
+			visitIdAndCodeMap = saveBenVisitDetails(requestOBJ.getAsJsonObject("visitDetails"),
 					nurseUtilityClass);
+			}
 
 			// 07-06-2018 visit code
 			Long benVisitID = null;

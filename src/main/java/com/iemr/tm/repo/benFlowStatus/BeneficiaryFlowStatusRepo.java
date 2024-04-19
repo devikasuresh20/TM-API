@@ -440,5 +440,8 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 //	 */
 //	@Query("SELECT  t.lab_technician_flag from BeneficiaryFlowStatus t WHERE t.benFlowID =:benFlowID ")
 //	public Short getLabTechnicianFlag(@Param("benFlowID") Long benFlowID);
+	
+	@Query("SELECT t from BeneficiaryFlowStatus t where t.benFlowID = :benFlowID And t.nurseFlag = :nurseFlag")
+	BeneficiaryFlowStatus checkExistData(@Param("benFlowID") Long benFlowID, @Param("nurseFlag") Short nurseFlag);
 
 }

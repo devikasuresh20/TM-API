@@ -385,6 +385,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	/**
 	 * Save beneficiary visit details data and return beneficiary visit ID.
+	 * 
 	 * @param beneficiaryVisitDetail
 	 * @return
 	 */
@@ -423,28 +424,28 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	}
 
-	public int getMaxCurrentdate(Long beneficiaryRegID,String visitreason,String visitcategory) throws IEMRException{
-		String maxDate=benVisitDetailRepo.getMaxCreatedDate(beneficiaryRegID,visitreason,visitcategory);
-		
-	    int i=0;
-		if(maxDate!=null) {
-		try {
-			DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String maxdateTrim=maxDate.substring(0, maxDate.indexOf("."));
-			java.util.Date  d = timeFormat.parse(maxdateTrim);
-			Calendar cal = Calendar.getInstance();
-			Calendar cal1 = Calendar.getInstance();
-			cal.setTime(d);
-			cal.add(Calendar.MINUTE, 10);
-			 i= cal.compareTo(cal1);
-			 
-		} catch (ParseException e) {
-			throw new IEMRException("Error while parseing created date :" + e.getMessage());
-		}
+	public int getMaxCurrentdate(Long beneficiaryRegID, String visitreason, String visitcategory) throws IEMRException {
+		String maxDate = benVisitDetailRepo.getMaxCreatedDate(beneficiaryRegID, visitreason, visitcategory);
+
+		int i = 0;
+		if (maxDate != null) {
+			try {
+				DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String maxdateTrim = maxDate.substring(0, maxDate.indexOf("."));
+				java.util.Date d = timeFormat.parse(maxdateTrim);
+				Calendar cal = Calendar.getInstance();
+				Calendar cal1 = Calendar.getInstance();
+				cal.setTime(d);
+				cal.add(Calendar.MINUTE, 10);
+				i = cal.compareTo(cal1);
+
+			} catch (ParseException e) {
+				throw new IEMRException("Error while parseing created date :" + e.getMessage());
+			}
 		}
 		return i;
 	}
-	
+
 	public Long generateVisitCode(Long visitID, Integer vanID, Integer sessionID) {
 		String visitCode = "";
 
@@ -480,6 +481,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	/**
 	 * created this for getting visit count of patient
+	 * 
 	 * @return
 	 */
 	public Short getBenVisitCount(Long benRegID) {
@@ -999,8 +1001,9 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					physicalVitalDetail.getBloodGlucose_2hr_PP(), physicalVitalDetail.getBloodGlucose_NotSpecified(),
 					physicalVitalDetail.getDiabeticStatusID(), physicalVitalDetail.getDiabeticStatus(),
 					physicalVitalDetail.getCapillaryRefillTime(), physicalVitalDetail.getModifiedBy(), processed,
-					physicalVitalDetail.getRbsTestResult(),physicalVitalDetail.getRbsTestRemarks(),physicalVitalDetail.getsPO2(),
-					physicalVitalDetail.getBeneficiaryRegID(), physicalVitalDetail.getVisitCode());
+					physicalVitalDetail.getRbsTestResult(), physicalVitalDetail.getRbsTestRemarks(),
+					physicalVitalDetail.getsPO2(), physicalVitalDetail.getBeneficiaryRegID(),
+					physicalVitalDetail.getVisitCode());
 
 		}
 		return r;
@@ -1187,7 +1190,6 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		column.put("columnName", "Tobacco Use Status");
 		column.put("keyName", "tobaccoUseStatus");
 		columns.add(column);
-
 
 		column = new HashMap<String, Object>();
 		column.put("columnName", "Tobacco Use Type");
@@ -2694,7 +2696,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		prescriptionDetail.setParkingPlaceID(parkingPlaceID);
 		if (instruction != null)
 			prescriptionDetail.setInstruction(instruction);
-		if(provisionalDiagnosisList != null)
+		if (provisionalDiagnosisList != null)
 			prescriptionDetail.setProvisionalDiagnosisList(provisionalDiagnosisList);
 
 		Long prescriptionID = saveBenPrescription(prescriptionDetail);
@@ -2741,24 +2743,26 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		if (prescription != null && prescription.getProvisionalDiagnosisList() != null
 				&& prescription.getProvisionalDiagnosisList().size() > 0) {
-			int pointer = 1;
 			for (SCTDescription obj : prescription.getProvisionalDiagnosisList()) {
 				if (obj.getTerm() != null) {
-					if (pointer == prescription.getProvisionalDiagnosisList().size()) {
+					if (pdTerm.toString().isEmpty()) {
 						pdTerm.append(obj.getTerm());
-						if (obj.getConceptID() != null)
+						if (null != obj.getConceptID()) {
 							pdConceptID.append(obj.getConceptID());
-						else
+						} else {
 							pdConceptID.append("N/A");
+						}
 					} else {
-						pdTerm.append(obj.getTerm()).append("  ||  ");
-						if (obj.getConceptID() != null)
-							pdConceptID.append(obj.getConceptID()).append("  ||  ");
-						else
-							pdConceptID.append("N/A").append("  ||  ");
+						if (obj.getTerm() != null) {
+							pdTerm.append("  ||  ").append(obj.getTerm());
+						}
+						if (obj.getConceptID() != null) {
+							pdConceptID.append("  ||  ").append(obj.getConceptID());
+						} else {
+							pdConceptID.append("  ||  ").append("N/A");
+						}
 					}
 				}
-				pointer++;
 			}
 			prescription.setDiagnosisProvided(pdTerm.toString());
 			prescription.setDiagnosisProvided_SCTCode(pdConceptID.toString());
@@ -3166,7 +3170,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getNurseWorklistNew(providerServiceMapId,
-				vanID,new Timestamp(sevenDaysAgo));
+				vanID, new Timestamp(sevenDaysAgo));
 
 		return new Gson().toJson(obj);
 	}
